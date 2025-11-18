@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    canvas {
+      max-width: 600px;
+      margin-bottom: 40px;
+    }
+
+    /* Estilos para el nuevo botón atractivo y animado */
+    .pulse-btn {
+      appearance: none;
+      -webkit-appearance: none;
+      border: none;
+      padding: 12px 22px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(90deg, #7c3aed 0%, #06b6d4 100%);
+      border-radius: 999px;
+      box-shadow: 0 6px 18px rgba(99,102,241,0.18);
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+      position: relative;
+      overflow: hidden;
+      outline: none;
+      margin-bottom: 20px;
+    }
+
+    /* Sutil micro-interacción al pasar el ratón */
+    .pulse-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 12px 28px rgba(7,89,133,0.18);
+    }
+
+    /* Animación "esperando" (pulso expansivo) */
+    .pulse-btn.pulse {
+      animation: waiting-pulse 1.8s infinite;
+    }
+
+    @keyframes waiting-pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(124,58,237,0.36), 0 6px 18px rgba(12, 12, 17, 0.12);
+      }
+      60% {
+        box-shadow: 0 0 0 20px rgba(124,58,237,0), 0 10px 22px rgba(99,102,241,0.12);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(124,58,237,0), 0 6px 18px rgba(159, 160, 231, 0.12);
+      }
+    }
+
+    /* Pequeño efecto radial al hacer foco o pulsar */
+    .pulse-btn:active::after,
+    .pulse-btn:focus::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 200%;
+      height: 200%;
+      transform: translate(-50%, -50%) scale(.6);
+      background: radial-gradient(circle, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 40%);
+      border-radius: 50%;
+      opacity: 1;
+      transition: opacity .25s, transform .25s;
+      pointer-events: none;
+    }
+
+  </style>
+</head>
+<body>
+<h1>1. Ejemplo básico: gráfica de barras mínima</h1>
+<canvas id="myChart"></canvas>
+<h1>2. Líneas + opciones básicas (título, líneas suavizadas)</h1>
+<canvas id="lineChart"></canvas>
+<h1>3. Gráfica de pastel (pie chart)</h1>
+<canvas id="pieChart"></canvas>
+<h1>4. Dos datasets juntos (ejemplo comparativo)</h1>
+<canvas id="compareChart"></canvas>
+<h1>5. Gráfica con datos dinámicos</h1>
+<button class="pulse-btn" onclick="addRandom()">Añadir dato</button>
+<canvas id="dynamicChart"></canvas>
+
+
+<script>
+const ctx = document.getElementById('myChart').getContext('2d');
+// Crear un gráfico de barras
+new Chart(ctx, {
+  type: 'bar', // Tipo de gráfico
+  data: {
+    labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'], // Etiquetas del eje X
+    datasets: [{
+      label: 'Asistentes', // Etiqueta del conjunto de datos
+      data: [12, 19, 3, 5, 2], // Datos para cada etiqueta
+      backgroundColor: 'rgba(54,162,235,0.5)' // Color de fondo de las barras
+    }]
+  }
+});
+
+// Crear un gráfico de líneas
+const ctx2 = document.getElementById('lineChart');
+new Chart(ctx2, {
+  type: 'line', // Tipo de gráfico
+  data: {
+    labels: ['Enero','Febrero','Marzo','Abril','Mayo'], // Etiquetas del eje X
+    datasets: [{
+      label: 'Ventas', // Etiqueta del conjunto de datos
+      data: [10, 30, 25, 40, 20], // Datos para cada etiqueta
+      borderWidth: 2, // Ancho de la línea
+      tension: 0.3, // Suaviza la línea
+      borderColor: 'red' // Color de la línea
+    }]
+  },
+  options: {
+    plugins: {
+      title: {
+        display: true, // Mostrar el título
+        text: 'Ventas mensuales' // Texto del título
+      }
+    }
+  }
+});
+
+// Crear un gráfico de pastel
+new Chart(document.getElementById('pieChart'), {
+  type: 'pie', // Tipo de gráfico
+  data: {
+    labels: ['Chrome', 'Firefox', 'Safari'], // Etiquetas del gráfico
+    datasets: [{
+      data: [60, 25, 15], // Datos para cada etiqueta
+      backgroundColor: ['#f87171', '#60a5fa', '#34d399'] // Colores de cada sección
+    }]
+  }
+});
+
+// Crear un gráfico de barras comparativo
+new Chart(document.getElementById('compareChart'), {
+  type: 'bar', // Tipo de gráfico
+  data: {
+    labels: ['2019', '2020', '2021', '2022'], // Etiquetas del eje X
+    datasets: [
+      {
+        label: 'Ingresos', // Etiqueta del conjunto de datos
+        data: [50, 60, 55, 70], // Datos para cada etiqueta
+        backgroundColor: 'rgba(54,162,235,0.5)' // Color de fondo de las barras
+      },
+      {
+        label: 'Gastos', // Etiqueta del conjunto de datos
+        data: [30, 40, 35, 50], // Datos para cada etiqueta
+        backgroundColor: 'rgba(255,99,132,0.5)' // Color de fondo de las barras
+      }
+    ]
+  }
+});
+
+// Crear un gráfico de líneas con datos dinámicos
+const ctx3 = document.getElementById('dynamicChart');
+const dynChart = new Chart(ctx3, {
+  type: 'line', // Tipo de gráfico
+  data: {
+    labels: ['0'], // Etiquetas iniciales
+    datasets: [{
+      label: 'Valores aleatorios', // Etiqueta del conjunto de datos
+      data: [Math.random()], // Datos iniciales
+      borderColor: 'purple' // Color de la línea
+    }]
+  }
+});
+
+// Función para añadir un dato aleatorio al gráfico dinámico
+function addRandom() {
+  const next = dynChart.data.labels.length; // Obtener el siguiente índice
+  dynChart.data.labels.push(String(next)); // Añadir nueva etiqueta
+  dynChart.data.datasets[0].data.push(Math.random()); // Añadir nuevo dato aleatorio
+  dynChart.update(); // Actualizar el gráfico
+}
+</script>
+
+</body>
+</html>
