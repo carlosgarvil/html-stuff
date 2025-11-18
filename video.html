@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>HTML5 Video: ejemplos, controles y Picture-in-Picture</title>
+
+  <!-- Highlight.js para colorear código -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 2rem;
+      line-height: 1.6;
+      max-width: 900px;
+    }
+
+    h1, h2, h3 { margin-top: 1.5rem; }
+
+    pre {
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      padding: 1rem;
+      margin-top: .5rem;
+    }
+
+    code { font-family: "Fira Code", Consolas, monospace; }
+
+    section {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .demo-box {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      border-radius: 8px;
+      background: #fafafa;
+      margin-bottom: 1rem;
+    }
+
+    .buttons { display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
+
+    button {
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      background: #0d6efd;
+      color: #fff;
+      transition: 0.1s ease;
+    }
+
+    button:hover { background: #0b5ed7; transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .status { margin-top: 0.5rem; font-size: 0.9rem; color: #555; }
+    .note { font-size: 0.9rem; color: #666; }
+  </style>
+</head>
+<body>
+
+<h1>Manejar vídeo en HTML5 🎬</h1>
+<p>En esta página aprenderás a:</p>
+
+<ul>
+  <li>Insertar vídeos con <code>&lt;video&gt;</code>.</li>
+  <li>Usar atributos importantes (<code>controls</code>, <code>loop</code>, <code>poster</code>, <code>preload</code>...).</li>
+  <li>Controlar el vídeo con JavaScript desde botones externos.</li>
+  <li>Activar <strong>Picture-in-Picture (PiP)</strong>.</li>
+</ul>
+
+<!-- ========================================================= -->
+<!-- 1. VIDEO BÁSICO -->
+<!-- ========================================================= -->
+<section>
+  <h2>1. Vídeo básico con controles nativos</h2>
+
+  <p>El ejemplo más simple es usar <code>&lt;video controls&gt;</code>:</p>
+
+  <div class="demo-box">
+    <video width="100%" controls>
+      <source src="assets/video_example.mp4" type="video/mp4">
+    </video>
+    <p class="note">⚠️ Recuerda cambiar la ruta del vídeo.</p>
+  </div>
+
+<pre><code class="html">
+&lt;video controls width="600"&gt;
+  &lt;source src="assets/video_example.mp4" type="video/mp4"&gt;
+&lt;/video&gt;
+</code></pre>
+</section>
+
+<!-- ========================================================= -->
+<!-- 2. ATRIBUTOS ÚTILES -->
+<!-- ========================================================= -->
+<section>
+  <h2>2. Atributos útiles en la etiqueta &lt;video&gt;</h2>
+
+  <ul>
+    <li><code>controls</code>: muestra los botones del navegador.</li>
+    <li><code>poster="img.jpg"</code>: imagen inicial antes de reproducir.</li>
+    <li><code>loop</code>: reproduce en bucle.</li>
+    <li><code>muted</code>: empieza silenciado.</li>
+    <li><code>preload="none|metadata|auto"</code>: controla cuánto cargar.</li>
+    <li><code>autoplay</code> (normalmente requiere <code>muted</code> por políticas de navegador).</li>
+  </ul>
+
+  <div class="demo-box">
+    <video
+      width="100%"
+      controls
+      loop
+      preload="metadata"
+      poster="assets/poster.jpg"
+    >
+      <source src="assets/video_example.mp4" type="video/mp4">
+    </video>
+  </div>
+
+<pre><code class="html">
+&lt;video controls loop preload="metadata" poster="assets/poster.jpg"&gt;
+  &lt;source src="assets/video_example.mp4" type="video/mp4"&gt;
+&lt;/video&gt;
+</code></pre>
+</section>
+
+<!-- ========================================================= -->
+<!-- 3. CONTROLES PERSONALIZADOS -->
+<!-- ========================================================= -->
+<section>
+  <h2>3. Controles personalizados con JavaScript</h2>
+
+  <div class="demo-box">
+    <video id="miVideo" width="100%" src="assets/video_example.mp4" preload="metadata"></video>
+
+    <div class="buttons">
+      <button id="vPlay">▶️ Reproducir</button>
+      <button id="vPause">⏸️ Pausar</button>
+      <button id="vToggle">⏯️ Play/Pause</button>
+      <button id="vMute">🔇 Mute</button>
+      <button id="vUnmute">🔊 Unmute</button>
+      <button id="vFull">⛶ Pantalla completa</button>
+      <button id="vPip">🪟 Picture-in-Picture</button>
+    </div>
+
+    <p class="status" id="vStatus">Estado: parado ⏹️</p>
+  </div>
+
+<h3>Código HTML</h3>
+<pre><code class="html">
+&lt;video id="miVideo" src="assets/video_example.mp4"&gt;&lt;/video&gt;
+
+&lt;button id="vPlay"&gt;Reproducir&lt;/button&gt;
+&lt;button id="vPause"&gt;Pausar&lt;/button&gt;
+&lt;button id="vToggle"&gt;Play/Pause&lt;/button&gt;
+&lt;button id="vPip"&gt;Picture-in-Picture&lt;/button&gt;
+</code></pre>
+
+<h3>Código JavaScript</h3>
+<pre><code class="javascript">
+/* Obtener referencias a los elementos del DOM que vamos a controlar */
+const video = document.getElementById('miVideo');
+const status = document.getElementById('vStatus');
+
+/* -----------------------------------------------------
+   Controles básicos: reproducir, pausar y alternar estado
+   - vPlay: llama a video.play() para iniciar reproducción
+   - vPause: llama a video.pause() para detenerla
+   - vToggle: comprueba video.paused para alternar
+   ----------------------------------------------------- */
+document.getElementById('vPlay').onclick = () => video.play();
+document.getElementById('vPause').onclick = () => video.pause();
+document.getElementById('vToggle').onclick = () =>
+  video.paused ? video.play() : video.pause();
+
+/* -----------------------------------------------------
+   Control de audio: mute y unmute
+   - video.muted es un booleano; true silencia, false activa sonido
+   ----------------------------------------------------- */
+document.getElementById('vMute').onclick = () => video.muted = true;
+document.getElementById('vUnmute').onclick = () => video.muted = false;
+
+/* -----------------------------------------------------
+   Pantalla completa:
+   - requestFullscreen() solicita que el elemento ocupe toda la pantalla
+   - puede devolver una promesa (según navegador)
+   ----------------------------------------------------- */
+document.getElementById('vFull').onclick = () => video.requestFullscreen();
+
+/* -----------------------------------------------------
+   Picture-in-Picture (PiP):
+   - Si ya estamos en PiP, salimos con exitPictureInPicture()
+   - Si no, solicitamos requestPictureInPicture() en el elemento video
+   - Usamos try/catch porque no todos los navegadores soportan PiP
+   ----------------------------------------------------- */
+document.getElementById('vPip').onclick = async () => {
+  try {
+    if (document.pictureInPictureElement) {
+      await document.exitPictureInPicture(); // salir de PiP
+    } else {
+      await video.requestPictureInPicture(); // entrar en PiP
+    }
+  } catch (err) {
+    alert("Tu navegador no soporta Picture-in-Picture.");
+  }
+};
+
+/* -----------------------------------------------------
+   Actualizar la interfaz según eventos del vídeo:
+   - onplay, onpause, onended actualizan el texto de estado
+   - útil para feedback al usuario
+   ----------------------------------------------------- */
+video.onplay  = () => status.textContent = "Estado: reproduciendo ▶️";
+video.onpause = () => status.textContent = "Estado: en pausa ⏸️";
+video.onended = () => status.textContent = "Estado: terminado ✔️";
+</code></pre>
+
+</section>
+
+
+<script>
+  // Obtener referencias a los elementos del DOM que vamos a controlar
+  const video = document.getElementById('miVideo');
+  const status = document.getElementById('vStatus');
+
+  if (video) {
+    // Reproducir / Pausar: handlers que llaman a las APIs del elemento <video>
+    document.getElementById('vPlay').onclick   = () => video.play();
+    document.getElementById('vPause').onclick  = () => video.pause();
+    document.getElementById('vToggle').onclick = () =>
+      video.paused ? video.play() : video.pause();
+
+    // Mute / Unmute: cambiar la propiedad muted
+    document.getElementById('vMute').onclick   = () => video.muted = true;
+    document.getElementById('vUnmute').onclick = () => video.muted = false;
+
+    // Pantalla completa: solicitar modo fullscreen para el elemento vídeo
+    document.getElementById('vFull').onclick   = () => video.requestFullscreen();
+
+    // Picture-in-Picture: manejamos entrada/salida y posibles errores
+    document.getElementById('vPip').onclick = async () => {
+      try {
+        if (document.pictureInPictureElement) {
+          // Si ya hay un elemento en PiP, salimos
+          await document.exitPictureInPicture();
+        } else {
+          // Si no, solicitamos que el vídeo entre en PiP
+          await video.requestPictureInPicture();
+        }
+      } catch (err) {
+        // Informar al alumnado/usuario si su navegador no soporta PiP
+        alert("Tu navegador no soporta Picture-in-Picture.");
+      }
+    };
+
+    // Actualizar estado visible para el usuario cuando cambie la reproducción
+    video.onplay  = () => status.textContent = 'Estado: reproduciendo ▶️';
+    video.onpause = () => status.textContent = 'Estado: en pausa ⏸️';
+    video.onended = () => status.textContent = 'Estado: terminado ✔️';
+  }
+</script>
+
+</body>
+</html>
