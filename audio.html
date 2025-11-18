@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>HTML5 Audio: ejemplos y controles con JavaScript</title>
+
+  <!-- Highlight.js: estilos + script -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 2rem;
+      line-height: 1.6;
+      max-width: 900px;
+    }
+
+    h1, h2, h3 { margin-top: 1.5rem; }
+
+    pre {
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      padding: 1rem;
+      margin-top: .5rem;
+    }
+
+    code {
+      font-family: "Fira Code", Consolas, monospace;
+    }
+
+    section {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .demo-box {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      background: #fafafa;
+    }
+
+    .buttons { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+
+    button {
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      background: #0d6efd;
+      color: #fff;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.15s ease;
+    }
+
+    button:hover { background: #0b5ed7; transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .status { margin-top: 0.5rem; font-size: 0.9rem; color: #555; }
+    .note { font-size: 0.9rem; color: #666; }
+  </style>
+</head>
+<body>
+
+  <h1>Trabajar con audio en HTML5 🎧</h1>
+
+  <p>En esta página vemos cómo:</p>
+  <ul>
+    <li>Insertar audio con <code>&lt;audio&gt;</code>.</li>
+    <li>Usar atributos como <code>loop</code>, <code>autoplay</code>, <code>preload</code>.</li>
+    <li>Controlarlo mediante JavaScript con botones externos.</li>
+  </ul>
+
+  <!-- ==== EJEMPLO 1 ==== -->
+  <section>
+    <h2>1. Audio básico con controles nativos</h2>
+
+    <div class="demo-box">
+      <audio controls>
+        <source src="assets/audio_example.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <pre><code class="html">
+&lt;audio controls&gt;
+  &lt;source src="assets/audio_example.mp3" type="audio/mpeg"&gt;
+&lt;/audio&gt;
+    </code></pre>
+  </section>
+
+  <!-- ==== EJEMPLO 2 ==== -->
+  <section>
+    <h2>2. Atributos útiles de &lt;audio&gt;</h2>
+
+    <div class="demo-box">
+      <audio controls loop preload="metadata">
+        <source src="assets/audio_example.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+
+<pre><code class="html">
+&lt;audio controls loop preload="metadata"&gt;
+  &lt;source src="assets/audio_example.mp3" type="audio/mpeg"&gt;
+&lt;/audio&gt;
+</code></pre>
+  </section>
+
+  <!-- ==== EJEMPLO 3 ==== -->
+  <section>
+    <h2>3. Controles personalizados con JavaScript</h2>
+
+    <div class="demo-box">
+      <audio id="miAudio" src="assets/audio_example.mp3" preload="metadata"></audio>
+
+      <div class="buttons">
+        <button id="btnPlay">▶️ Reproducir</button>
+        <button id="btnPause">⏸️ Pausar</button>
+        <button id="btnToggle">⏯️ Play/Pause</button>
+      </div>
+
+      <p class="status" id="estadoAudio">Estado: parado ⏹️</p>
+    </div>
+
+<pre><code class="html">
+&lt;audio id="miAudio" src="assets/audio_example.mp3"&gt;&lt;/audio&gt;
+
+&lt;button id="btnPlay"&gt;Reproducir&lt;/button&gt;
+&lt;button id="btnPause"&gt;Pausar&lt;/button&gt;
+&lt;button id="btnToggle"&gt;Play/Pause&lt;/button&gt;
+</code></pre>
+
+<pre><code class="javascript">
+const audio = document.getElementById('miAudio');
+const estado = document.getElementById('estadoAudio');
+
+document.getElementById('btnPlay').onclick = () => audio.play();
+document.getElementById('btnPause').onclick = () => audio.pause();
+
+document.getElementById('btnToggle').onclick = () => {
+  audio.paused ? audio.play() : audio.pause();
+};
+
+audio.onplay  = () => estado.textContent = "Estado: reproduciendo ▶️";
+audio.onpause = () => estado.textContent = "Estado: en pausa ⏸️";
+audio.onended = () => estado.textContent = "Estado: terminado ✅";
+</code></pre>
+
+  </section>
+
+  <!-- SCRIPT REAL -->
+  <script>
+    const audio = document.getElementById('miAudio');
+    const estado = document.getElementById('estadoAudio');
+
+    if (audio) {
+      document.getElementById('btnPlay').onclick  = () => audio.play();
+      document.getElementById('btnPause').onclick = () => audio.pause();
+      document.getElementById('btnToggle').onclick = () => {
+        audio.paused ? audio.play() : audio.pause();
+      };
+
+      audio.onplay  = () => estado.textContent = 'Estado: reproduciendo ▶️';
+      audio.onpause = () => estado.textContent = 'Estado: en pausa ⏸️';
+      audio.onended = () => estado.textContent = 'Estado: terminado ✅';
+    }
+  </script>
+
+</body>
+</html>
