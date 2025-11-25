@@ -4,6 +4,16 @@
   <meta charset="UTF-8">
   <title>Buscador iTunes</title>
 </head>
+<style>
+    footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: #f1f1f1;
+        text-align: center;
+        padding: 10px 0;
+    }
+</style>
 <body>
 
   <h2>Buscador de música (iTunes API)</h2>
@@ -12,6 +22,10 @@
   <button id="searchBtn">Buscar</button>
 
   <ul id="results"></ul>
+  <footer>
+    <!--footer siempre debe estar al final del body-->
+    <p>Datos obtenidos de la API pública de iTunes.</p>
+  </footer>
 
 <script>
   document.getElementById("searchBtn").addEventListener("click", function () {
